@@ -29,18 +29,21 @@ export const ArticleParamsForm = ({
 	articleState,
 	onApply,
 }: ArticleParamsFormProps) => {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [formState, setFormState] = useState(articleState);
 	const asideRef = useRef<HTMLElement>(null);
 
 	useEffect(() => {
+		if (!isSidebarOpen) {
+			return;
+		}
+
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
-				isOpen &&
 				asideRef.current &&
 				!asideRef.current.contains(event.target as Node)
 			) {
-				setIsOpen(false);
+				setIsSidebarOpen(false);
 			}
 		};
 
@@ -49,7 +52,7 @@ export const ArticleParamsForm = ({
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [isOpen]);
+	}, [isSidebarOpen]);
 
 	useEffect(() => {
 		setFormState(articleState);
@@ -68,12 +71,15 @@ export const ArticleParamsForm = ({
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen((prev) => !prev)} />
+			<ArrowButton
+				isOpen={isSidebarOpen}
+				onClick={() => setIsSidebarOpen((prev) => !prev)}
+			/>
 
 			<aside
 				ref={asideRef}
 				className={clsx(styles.container, {
-					[styles.container_open]: isOpen,
+					[styles.container_open]: isSidebarOpen,
 				})}>
 				<form
 					className={styles.form}
